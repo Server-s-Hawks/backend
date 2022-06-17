@@ -1,22 +1,27 @@
+var dbConn = require("../dbconfig");
+var dbQuery = require("../query");
 
 // create user
 const createUser = async (req, res) => {
-  let LastName = req.body.LastName;
-  let FirstName = req.body.FirstName;
-  let Address = req.body.Address;
-  let City = req.body.City;
+  let user_ID = req.body.user_ID;
+  let name = req.body.name;
+  let address_city = req.body.address_city;
+  let email = req.body.email;
+  let dob = req.body.dob;
+  let nic = req.body.nic;
+  let password = req.body.password;
 
   // validation
-  if (!LastName || !FirstName)
+  if (!email || !password)
     return res.status(400).send({
       error: true,
-      message: "Please provide first name and last name",
+      message: "Please provide all details",
     });
 
   // insert to db
   dbConn.query(
-    "INSERT INTO users (LastName, FirstName, Address, City) VALUES (?, ?, ?, ?)",
-    [LastName, FirstName, Address, City],
+    dbQuery.userQueries.insertUser,
+    [user_ID, name, dob, nic, email, address_city, password],
     function (error, results, fields) {
       if (error) throw error;
       return res.send({
@@ -30,7 +35,7 @@ const createUser = async (req, res) => {
 
 //get all users
 const getAllUsers = async (req, res) => {
-  dbConn.query("SELECT * FROM users", function (error, results, fields) {
+  dbConn.query(dbQuery.userQueries.getAllUsers, function (error, results, fields) {
     if (error) throw error;
 
     // check has data or not
@@ -47,7 +52,7 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
     let userID = req.params.id;
 
-    dbConn.query("SELECT * FROM users where userID = ?",
+    dbConn.query(dbQuery.userQueries.getUserByUserID,
     [userID], function (error, results, fields) {
       if (error) throw error;
   
@@ -63,23 +68,25 @@ const getUserById = async (req, res) => {
 
 // update user with id
 const updateUser = async (req, res) => {
-  let userID = req.params.id;
-  let LastName = req.body.LastName;
-  let FirstName = req.body.FirstName;
-  let Address = req.body.Address;
-  let City = req.body.City;
+  let user_ID = req.params.id;
+  let name = req.body.name;
+  let address_city = req.body.address_city;
+  let email = req.body.email;
+  let dob = req.body.dob;
+  let nic = req.body.nic;
+  let password = req.body.password;
 
   // validation
-  if (!LastName || !FirstName) {
+  if (!email || !password) {
     return res.status(400).send({
       error: true,
-      message: "Please provide user firstname, lastname",
+      message: "Please provide email and password",
     });
   }
 
   dbConn.query(
-    "UPDATE users SET LastName = ?, FirstName = ?, Address = ?, City = ? WHERE userID = ?",
-    [LastName, FirstName, Address, City, userID],
+    dbQuery.userQueries.updateUser,
+    [name, dob, nic, email, address_city, password, user_ID],
     function (error, results, fields) {
       if (error) throw error;
 
@@ -101,7 +108,7 @@ const deleteUser = async (req, res) => {
     if (!userID) {
         return res.status(400).send({ error: true, message: 'Please provide user id' });
     }
-    dbConn.query('DELETE FROM users WHERE userID = ?', [userID], function (error, results, fields) {
+    dbConn.query(dbQuery.userQueries.deleteUser, [userID], function (error, results, fields) {
         if (error) throw error;
 
         // check data updated or not

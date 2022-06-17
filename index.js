@@ -7,26 +7,37 @@ const app=express(); // this is how we call that function
 //const dbconfig= require('./dbconfig');               
 
 //app.use(express.json()); 
-const mysql=require('mysql');
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
+
+const cors = require('cors');
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
+const mysql=require('mysql2');
 
 const connect= mysql.createConnection(
     {
         "host": "localhost",
         "user": "root",
-        "password":"Tharindu@mysql1999",
+        "password":"Zhan1005",
         "port": "3306",
-        "database": "Employee_Management_System"
+        "database": "emp_system"
     }
 );
  connect.connect((error)=>{
      if(error){
-         console.log("connection faild");
+         console.log("connection failed", error);
      }
      else {
          console.log("Database connected");
      }
      
  })
+
+ const userAPI = require("./apis/user.api");
+ app.use("/user", userAPI());
 
 app.get('/login', (req,res)=>{
     connect.query("select Username, Password from Account", (error, result)=>{
@@ -142,5 +153,5 @@ app.get('/api/courses', (req,res)=>{
 
 
 //PORT
-const port =process.env.PORT || 3000;   //here port is dynamically assigned by environment variables.
+const port =process.env.PORT || 5000;   //here port is dynamically assigned by environment variables.
 app.listen(port, ()=>console.log(`listenning on port ${port}`));

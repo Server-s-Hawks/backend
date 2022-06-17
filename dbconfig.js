@@ -1,20 +1,21 @@
-/*const mysql=require('mysql');
+const mysql=require('mysql2');
 
 const connect= mysql.createConnection(
     {
         "host": "localhost",
         "user": "root",
-        "password":"Tharindu@mysql1999",
+        "password":"Zhan1005",
         "port": "3306",
-        "database": "Employee_Management_System"
+        "database": "emp_system"
     }
 );
  connect.connect((error)=>{
      if(error){
-         console.log("connection faild");
+         console.log("connection failed");
      }
      else {
-         console.log("Database connected");
+         console.log("Database called");
      }
      
- })*/
+ })
+ module.exports = connect;
