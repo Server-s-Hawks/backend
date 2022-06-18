@@ -5,6 +5,8 @@ var dbQuery = require("../query");
 const createUser = async (req, res) => {
   let user_ID = req.body.user_ID;
   let name = req.body.name;
+  let address_no = req.body.address_no;
+  let address_street = req.body.address_street;
   let address_city = req.body.address_city;
   let email = req.body.email;
   let dob = req.body.dob;
@@ -21,9 +23,21 @@ const createUser = async (req, res) => {
   // insert to db
   dbConn.query(
     dbQuery.userQueries.insertUser,
-    [user_ID, name, dob, nic, email, address_city, password],
+    [user_ID, name, dob, nic, email, address_no, address_street, address_city, password],
     function (error, results, fields) {
-      if (error) throw error;
+      if (error && error.code == 'ER_DUP_ENTRY'){
+        return res.send({
+          error: true,
+          data: results,
+          message: "Email already added",
+        });
+      } else if (error){
+        return res.send({
+          error: true,
+          data: results,
+          message: "Error occured",
+        });
+      };
       return res.send({
         error: false,
         data: results,
@@ -70,23 +84,15 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   let user_ID = req.params.id;
   let name = req.body.name;
+  let address_no = req.body.address_no;
+  let address_street = req.body.address_street;
   let address_city = req.body.address_city;
-  let email = req.body.email;
   let dob = req.body.dob;
   let nic = req.body.nic;
-  let password = req.body.password;
-
-  // validation
-  if (!email || !password) {
-    return res.status(400).send({
-      error: true,
-      message: "Please provide email and password",
-    });
-  }
 
   dbConn.query(
     dbQuery.userQueries.updateUser,
-    [name, dob, nic, email, address_city, password, user_ID],
+    [name, dob, nic, address_no, address_street, address_city, user_ID],
     function (error, results, fields) {
       if (error) throw error;
 
