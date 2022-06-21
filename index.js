@@ -268,3 +268,61 @@ app.post('/create', (req, res) => {
 app.listen(5000,()=>{
     console.log("Server running on port 5000");
 })
+
+//----------Niroshika Dilhani----------------------------
+
+app.post("/client", (req, res) => {
+    
+    
+  const BasicSalary=req.body.Basic;
+  const user_ID=req.body.user_ID;
+  const allowance_transport=req.body.allowance_transport;
+  const allowance_travel=req.body.allowance_travel;
+  const allowance_entertainment=req.body.allowance_entertainment;
+  const allowance_housing=req.body.allowance_housing;
+  const allowance_medical=req.body.allowance_medical;
+  const deduction_Tax=req.body.deduction_Tax;
+  const deduction_loans=req.body.deduction_Loans;
+  const deduction_advance=req.body.deduction_Advance;
+  const deduction_EPF=req.body.deduction_EPF;
+
+
+  db.query(
+   'INSERT INTO salary (amount,user_ID) VALUES (?,?) ',
+   [BasicSalary,user_ID],
+   (err, result) => {
+       if(err){
+           console.log(err)
+       }else{
+           res.send("Values Inserted")
+       }
+   }
+   )
+
+   db.query(
+      'INSERT INTO allowances (transport,travel,entertainment,housing ,medical,user_ID) VALUES (?,?,?,?,?,?)',
+      [allowance_transport,allowance_travel,allowance_entertainment,allowance_housing,allowance_medical, user_ID],
+      (err, result) => {
+          if(err){
+              console.log(err)
+          }else{
+              res.send("Values Inserted")
+          }
+      }
+      )
+
+      db.query(
+          'INSERT INTO deduction (tax,loans,advance,EPF,user_ID) VALUES (?,?,?,?)',
+          [deduction_Tax,deduction_loans,deduction_advance,deduction_EPF,user_ID],
+          (err, result) => {
+              if(err){
+                  console.log(err)
+              }else{
+                  res.send("Values Inserted")
+              }
+          }
+          )
+
+    
+})
+
